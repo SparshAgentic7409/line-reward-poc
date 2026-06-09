@@ -197,13 +197,15 @@ async function main() {
 
     progressBar.innerText =
         Math.round(progress) + "%";
+
+    const accessToken = liff.getAccessToken();
+console.log("Access Token:", accessToken);
+
 }
 
 main();
     
-    const accessToken = liff.getAccessToken();
-console.log("Access Token:", accessToken);
-
+    
 </script>
 
 </body>
