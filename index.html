@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LINE Reward POC</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+
+<h2>Loading...</h2>
+
+<script>
+
+async function init() {
+
+    await liff.init({
+        liffId: "2010342306-n7koMqwU"
+    });
+
+    if (!liff.isLoggedIn()) {
+        liff.login();
+        return;
+    }
+
+    const profile = await liff.getProfile();
+
+    document.body.innerHTML = `
+        <h1>🏆 Loyalty Dashboard</h1>
+        <h2>Welcome ${profile.displayName}</h2>
+
+        <h3>Reward Points: 1500</h3>
+        <h3>Tier: Gold</h3>
+        <h3>Next Reward: 500 points away</h3>
+
+        <hr>
+
+        <p>User ID:</p>
+        <p>${profile.userId}</p>
+    `;
+}
+
+init();
+
+</script>
+
+</body>
+</html>
