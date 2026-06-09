@@ -1,16 +1,133 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>LINE Reward POC</title>
+    <meta charset="UTF-8">
+    <title>LINE Reward Dashboard</title>
+
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background:#f4f6f8;
+            padding:40px;
+        }
+
+        .card{
+            max-width:700px;
+            margin:auto;
+            background:white;
+            padding:30px;
+            border-radius:15px;
+            box-shadow:0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .profile{
+            text-align:center;
+        }
+
+        .profile img{
+            width:120px;
+            height:120px;
+            border-radius:50%;
+            border:4px solid #06c755;
+        }
+
+        .profile h2{
+            margin-top:15px;
+        }
+
+        .info{
+            margin-top:25px;
+        }
+
+        .box{
+            background:#f8f9fa;
+            padding:15px;
+            border-radius:10px;
+            margin-bottom:10px;
+        }
+
+        .gold{
+            color:#d4af37;
+            font-weight:bold;
+        }
+
+        .silver{
+            color:#808080;
+            font-weight:bold;
+        }
+
+        .bronze{
+            color:#cd7f32;
+            font-weight:bold;
+        }
+
+        .progress{
+            width:100%;
+            background:#ddd;
+            border-radius:20px;
+            overflow:hidden;
+            margin-top:10px;
+        }
+
+        .progress-bar{
+            height:25px;
+            background:#06c755;
+            width:0%;
+            color:white;
+            text-align:center;
+            line-height:25px;
+        }
+    </style>
 </head>
+
 <body>
 
-<h2>Loading...</h2>
+<div class="card">
+
+    <h1>🏆 Loyalty Dashboard</h1>
+
+    <div class="profile">
+        <img id="profilePic" src="">
+        <h2 id="name">Loading...</h2>
+    </div>
+
+    <div class="info">
+
+        <div class="box">
+            <strong>User ID:</strong><br>
+            <span id="userId"></span>
+        </div>
+
+        <div class="box">
+            <strong>Reward Points:</strong>
+            <h2 id="points">0</h2>
+        </div>
+
+        <div class="box">
+            <strong>Tier:</strong>
+            <h2 id="tier">Bronze</h2>
+        </div>
+
+        <div class="box">
+            <strong>Progress to Next Reward</strong>
+
+            <div class="progress">
+                <div id="progressBar" class="progress-bar">
+                    0%
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 <script>
 
-async function init() {
+async function main() {
 
     await liff.init({
         liffId: "2010342306-n7koMqwU"
@@ -23,22 +140,66 @@ async function init() {
 
     const profile = await liff.getProfile();
 
-    document.body.innerHTML = `
-        <h1>🏆 Loyalty Dashboard</h1>
-        <h2>Welcome ${profile.displayName}</h2>
+    document.getElementById("name").innerText =
+        profile.displayName;
 
-        <h3>Reward Points: 1500</h3>
-        <h3>Tier: Gold</h3>
-        <h3>Next Reward: 500 points away</h3>
+    document.getElementById("userId").innerText =
+        profile.userId;
 
-        <hr>
+    document.getElementById("profilePic").src =
+        profile.pictureUrl;
 
-        <p>User ID:</p>
-        <p>${profile.userId}</p>
-    `;
+    /*
+      Mock CRM Database
+      Add more users here later
+    */
+
+    const rewardDB = {
+
+        "U530d669dd21647030aef474d2a303a5a": {
+            points: 1500,
+            tier: "Gold"
+        }
+
+    };
+
+    let customer = rewardDB[profile.userId];
+
+    if (!customer) {
+
+        customer = {
+            points: 250,
+            tier: "Bronze"
+        };
+
+    }
+
+    document.getElementById("points").innerText =
+        customer.points;
+
+    document.getElementById("tier").innerText =
+        customer.tier;
+
+    const tierElement =
+        document.getElementById("tier");
+
+    tierElement.className =
+        customer.tier.toLowerCase();
+
+    const progress =
+        Math.min((customer.points / 2000) * 100, 100);
+
+    const progressBar =
+        document.getElementById("progressBar");
+
+    progressBar.style.width =
+        progress + "%";
+
+    progressBar.innerText =
+        Math.round(progress) + "%";
 }
 
-init();
+main();
 
 </script>
 
